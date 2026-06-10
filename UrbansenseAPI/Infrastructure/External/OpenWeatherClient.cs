@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using UrbansenseAPI.Domain.Enums;
 using UrbansenseAPI.Domain.Models;
 
@@ -11,7 +11,7 @@ public class OpenWeatherClient(HttpClient httpClient, IConfiguration configurati
 
     public async Task<Weather> FetchCurrentAsync(string city, double lat, double lon)
     {
-        var url = $"/data/2.5/weather?lat={lat}&lon={lon}&appid={_apiKey}&units=metric&lang=pt_br";
+        var url = $"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={_apiKey}&units=metric&lang=pt_br";
         var response = await httpClient.GetFromJsonAsync<OWResponse>(url)
             ?? throw new InvalidOperationException("Resposta vazia da API OpenWeather.");
 

@@ -1,9 +1,8 @@
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace UrbansenseAPI.Infrastructure.HealthChecks;
 
-public class OpenWeatherHealthCheck(IHttpClientFactory httpClientFactory, IConfiguration configuration)
-    : IHealthCheck
+public class OpenWeatherHealthCheck(IConfiguration configuration) : IHealthCheck
 {
     public async Task<HealthCheckResult> CheckHealthAsync(
         HealthCheckContext context,
@@ -11,11 +10,10 @@ public class OpenWeatherHealthCheck(IHttpClientFactory httpClientFactory, IConfi
     {
         try
         {
-            var apiKey  = configuration["OpenWeather:ApiKey"];
-            var baseUrl = configuration["OpenWeather:BaseUrl"] ?? "https://api.openweathermap.org";
+            var apiKey = configuration["OpenWeather:ApiKey"];
+            var url    = $"https://api.openweathermap.org/data/2.5/weather?lat=-23.5505&lon=-46.6333&appid={apiKey}&units=metric";
 
-            var client   = httpClientFactory.CreateClient();
-            var url      = $"{baseUrl}/data/2.5/weather?q=São Paulo&appid={apiKey}&units=metric";
+            using var client   = new HttpClient();
             var response = await client.GetAsync(url, cancellationToken);
 
             return response.IsSuccessStatusCode
