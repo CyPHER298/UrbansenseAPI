@@ -1,0 +1,56 @@
+# Build output
+bin/
+obj/
+out/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+*.DotSettings.user
+
+# VS Code
+.vscode/
+
+# NuGet
+*.nupkg
+*.snupkg
+project.lock.json
+packages/
+.nuget/
+
+# Publish output
+publish/
+**/publish/
+
+# Entity Framework migrations temporary files
+*.mdf
+*.ldf
+
+# Logs
+*.log
+logs/
+
+# Secrets & environment
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+.env
+*.pfx
+*.p12
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test results
+TestResults/
+*.trx
+*.coveragexml
+coverage/
