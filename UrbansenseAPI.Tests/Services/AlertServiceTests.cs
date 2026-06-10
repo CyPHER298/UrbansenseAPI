@@ -1,3 +1,5 @@
+﻿using NSubstitute.ExceptionExtensions;
+using Xunit;
 using FluentAssertions;
 using NSubstitute;
 using UrbansenseAPI.Domain.Services;
@@ -14,14 +16,14 @@ public class AlertServiceTests
 
     public AlertServiceTests()
     {
-        _sut = new AlertService(_weatherService, _alertStore);
+        _sut = new AlertService(_weatherService, _alertStore, Substitute.For<Microsoft.Extensions.Logging.ILogger<UrbansenseAPI.Domain.Services.AlertService>>());
     }
 
     [Fact]
     public async Task GetActiveByCityAsync_WhenNoAlerts_ShouldReturnEmptyList()
     {
         // Arrange
-        var city = "São Paulo";
+        var city = "SÃ£o Paulo";
 
         // Act
         var result = await _sut.GetActiveByCityAsync(city);
@@ -35,7 +37,7 @@ public class AlertServiceTests
     {
         // Arrange
         var weather = new WeatherResponse(
-            "São Paulo", -23.5505, -46.6333,
+            "SÃ£o Paulo", -23.5505, -46.6333,
             28, 27, 90, 4, 25.0, null, "Rain", "chuva forte", DateTime.UtcNow);
 
         _weatherService
@@ -44,7 +46,7 @@ public class AlertServiceTests
 
         // Act
         await _sut.EvaluateAlertsAsync();
-        var alerts = await _sut.GetActiveByCityAsync("São Paulo");
+        var alerts = await _sut.GetActiveByCityAsync("SÃ£o Paulo");
 
         // Assert
         alerts.Should().Contain(a => a.Type == "Flooding");
@@ -55,7 +57,7 @@ public class AlertServiceTests
     {
         // Arrange
         var weather = new WeatherResponse(
-            "São Paulo", -23.5505, -46.6333,
+            "SÃ£o Paulo", -23.5505, -46.6333,
             22, 21, 95, 8, 45.0, null, "Rain", "chuva muito forte", DateTime.UtcNow);
 
         _weatherService
@@ -64,7 +66,7 @@ public class AlertServiceTests
 
         // Act
         await _sut.EvaluateAlertsAsync();
-        var alerts = await _sut.GetActiveByCityAsync("São Paulo");
+        var alerts = await _sut.GetActiveByCityAsync("SÃ£o Paulo");
 
         // Assert
         alerts.Should().Contain(a => a.Type == "Flooding" && a.Severity == "Critical");
@@ -75,7 +77,7 @@ public class AlertServiceTests
     {
         // Arrange
         var weather = new WeatherResponse(
-            "São Paulo", -23.5505, -46.6333,
+            "SÃ£o Paulo", -23.5505, -46.6333,
             25, 24, 85, 3, 15.0, null, "Rain", "chuva moderada", DateTime.UtcNow);
 
         _weatherService
@@ -84,7 +86,7 @@ public class AlertServiceTests
 
         // Act
         await _sut.EvaluateAlertsAsync();
-        var alerts = await _sut.GetActiveByCityAsync("São Paulo");
+        var alerts = await _sut.GetActiveByCityAsync("SÃ£o Paulo");
 
         // Assert
         alerts.Should().Contain(a => a.Type == "HeavyRain" && a.Severity == "Medium");
@@ -96,8 +98,8 @@ public class AlertServiceTests
     {
         // Arrange
         var weather = new WeatherResponse(
-            "São Paulo", -23.5505, -46.6333,
-            32, 34, 40, 2, 0.0, 10, "Clear", "céu limpo", DateTime.UtcNow);
+            "SÃ£o Paulo", -23.5505, -46.6333,
+            32, 34, 40, 2, 0.0, 10, "Clear", "cÃ©u limpo", DateTime.UtcNow);
 
         _weatherService
             .GetCurrentWeatherAsync(Arg.Any<string>(), Arg.Any<double>(), Arg.Any<double>())
@@ -105,7 +107,7 @@ public class AlertServiceTests
 
         // Act
         await _sut.EvaluateAlertsAsync();
-        var alerts = await _sut.GetActiveByCityAsync("São Paulo");
+        var alerts = await _sut.GetActiveByCityAsync("SÃ£o Paulo");
 
         // Assert
         alerts.Should().Contain(a => a.Type == "HighUv");
@@ -147,7 +149,7 @@ public class AlertServiceTests
     [Fact]
     public async Task EvaluateAlertsAsync_WhenApiThrows_ShouldNotPropagateException()
     {
-        // Arrange — API falha em todas as cidades
+        // Arrange â€” API falha em todas as cidades
         _weatherService
             .GetCurrentWeatherAsync(Arg.Any<string>(), Arg.Any<double>(), Arg.Any<double>())
             .Throws(new HttpRequestException("timeout"));
@@ -155,7 +157,11 @@ public class AlertServiceTests
         // Act
         var act = () => _sut.EvaluateAlertsAsync();
 
-        // Assert — não deve lançar exceção
+        // Assert â€” nÃ£o deve lanÃ§ar exceÃ§Ã£o
         await act.Should().NotThrowAsync();
     }
 }
+
+
+
+

@@ -1,3 +1,4 @@
+﻿using Xunit;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using FluentAssertions;
@@ -75,7 +76,7 @@ public class JwtServiceTests
         // Act
         var result = _sut.GenerateToken(user);
 
-        // Assert — decodifica o JWT e verifica as claims
+        // Assert â€” decodifica o JWT e verifica as claims
         var handler = new JwtSecurityTokenHandler();
         var jwt     = handler.ReadJwtToken(result.Token);
 
@@ -111,7 +112,7 @@ public class JwtServiceTests
         var token1 = _sut.GenerateToken(user);
         var token2 = _sut.GenerateToken(user);
 
-        // Assert — cada token deve ter um Jti único
+        // Assert â€” cada token deve ter um Jti Ãºnico
         var handler = new JwtSecurityTokenHandler();
         var jti1    = handler.ReadJwtToken(token1.Token).Id;
         var jti2    = handler.ReadJwtToken(token2.Token).Id;
@@ -119,3 +120,4 @@ public class JwtServiceTests
         jti1.Should().NotBe(jti2);
     }
 }
+

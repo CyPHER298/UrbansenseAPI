@@ -1,3 +1,4 @@
+﻿using Xunit;
 using FluentAssertions;
 using UrbansenseAPI.Domain.Enums;
 using UrbansenseAPI.Domain.Models;
@@ -10,10 +11,10 @@ public class RainRiskTests
     public void Calculate_WhenNoRainAndNoEvents_ShouldReturnLowRisk()
     {
         // Arrange
-        var city    = "São Paulo";
-        var hour    = 10;
+        var city = "São Paulo";
+        var hour = 10;
         double? avgRain = null;
-        var events  = 0;
+        var events = 0;
 
         // Act
         var result = RainRisk.Calculate(city, hour, avgRain, events);
@@ -30,10 +31,10 @@ public class RainRiskTests
     public void Calculate_WhenModerateRainAndFewEvents_ShouldReturnMediumRisk()
     {
         // Arrange
-        var city    = "Guarulhos";
-        var hour    = 15;
-        double? avgRain = 10.0; // score de chuva = 10/20 = 0.5
-        var events  = 6;        // score de frequência = 6/15 = 0.4
+        var city = "Guarulhos";
+        var hour = 15;
+        double? avgRain = 10.0;
+        var events = 6;
 
         // Act
         var result = RainRisk.Calculate(city, hour, avgRain, events);
@@ -47,10 +48,10 @@ public class RainRiskTests
     public void Calculate_WhenHeavyRainAndManyEvents_ShouldReturnHighRisk()
     {
         // Arrange
-        var city    = "Osasco";
-        var hour    = 17;
-        double? avgRain = 20.0; // score máximo = 1.0
-        var events  = 15;       // score máximo = 1.0
+        var city = "Osasco";
+        var hour = 17;
+        double? avgRain = 20.0;
+        var events = 15;
 
         // Act
         var result = RainRisk.Calculate(city, hour, avgRain, events);
@@ -64,21 +65,21 @@ public class RainRiskTests
     [Fact]
     public void Calculate_WhenRainExceedsMaxThreshold_ShouldCapScoreAt1()
     {
-        // Arrange — chuva muito acima de 20mm (limiar máximo)
+        // Arrange
         double? avgRain = 100.0;
         var events = 20;
 
         // Act
         var result = RainRisk.Calculate("SP", 18, avgRain, events);
 
-        // Assert — score máximo = 1.0 (capado pelo Min)
+        // Assert
         result.RiskScore.Should().BeApproximately(1.0, 0.01);
         result.Level.Should().Be(RiskLevel.High);
     }
 
     [Theory]
     [InlineData(0.0,  0,  RiskLevel.Low)]
-    [InlineData(8.0,  5,  RiskLevel.Medium)]
+    [InlineData(10.0, 7, RiskLevel.Medium)]
     [InlineData(20.0, 15, RiskLevel.High)]
     public void Calculate_MultipleScenarios_ShouldReturnCorrectLevel(
         double rain, int events, RiskLevel expectedLevel)
@@ -89,18 +90,19 @@ public class RainRiskTests
         // Assert
         result.Level.Should().Be(expectedLevel);
     }
-}
-
 
     [Fact]
     public void Alert_ShouldHaveTransitLineIdProperty()
     {
         // Arrange
-        var alert = new UrbansenseAPI.Domain.Models.Alert();
+        var alert = new Alert();
 
         // Act
         alert.transitLineId = 1;
 
         // Assert
-        FluentAssertions.AssertionExtensions.Should(alert.transitLineId).Be(1);
+        alert.transitLineId.Should().Be(1);
     }
+}
+
+

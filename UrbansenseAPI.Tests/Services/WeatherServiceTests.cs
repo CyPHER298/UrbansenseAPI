@@ -1,3 +1,4 @@
+﻿using Xunit;
 using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
@@ -26,7 +27,7 @@ public class WeatherServiceTests
     {
         // Arrange
         var weather = new Weather(
-            Id: null, City: "São Paulo",
+            Id: null, City: "SÃ£o Paulo",
             Latitude: -23.5505, Longitude: -46.6333,
             Temperature: 28, FeelsLike: 30,
             Humidity: 85, WindSpeed: 3,
@@ -35,13 +36,13 @@ public class WeatherServiceTests
             Description: "chuva leve",
             RecordedAt: DateTime.UtcNow);
 
-        _client.FetchCurrentAsync("São Paulo", -23.5505, -46.6333).Returns(weather);
+        _client.FetchCurrentAsync("SÃ£o Paulo", -23.5505, -46.6333).Returns(weather);
 
         // Act
-        var result = await _sut.GetCurrentWeatherAsync("São Paulo", -23.5505, -46.6333);
+        var result = await _sut.GetCurrentWeatherAsync("SÃ£o Paulo", -23.5505, -46.6333);
 
         // Assert
-        result.City.Should().Be("São Paulo");
+        result.City.Should().Be("SÃ£o Paulo");
         result.Temperature.Should().Be(28);
         result.RainMm.Should().Be(5.0);
         result.Condition.Should().Be("Rain");
@@ -63,7 +64,7 @@ public class WeatherServiceTests
         // Act
         await _sut.GetCurrentWeatherAsync("Guarulhos", -23.4538, -46.5333);
 
-        // Assert — store deve ter o registro
+        // Assert â€” store deve ter o registro
         var stored = _store.GetSince(now.AddSeconds(-1));
         stored.Should().HaveCount(1);
         stored[0].City.Should().Be("Guarulhos");
@@ -87,10 +88,10 @@ public class WeatherServiceTests
     [Fact]
     public async Task AnalyzeRainRiskAsync_WhenStoreIsEmpty_ShouldReturnLowRisk()
     {
-        // Arrange — store vazio, sem histórico de chuva
+        // Arrange â€” store vazio, sem histÃ³rico de chuva
 
         // Act
-        var result = await _sut.AnalyzeRainRiskAsync("São Paulo", 10);
+        var result = await _sut.AnalyzeRainRiskAsync("SÃ£o Paulo", 10);
 
         // Assert
         result.Level.Should().Be("Low");
@@ -100,7 +101,7 @@ public class WeatherServiceTests
     [Fact]
     public async Task GetHeavyRainAreasAsync_WhenNoHeavyRainInLastHour_ShouldReturnEmpty()
     {
-        // Arrange — store vazio
+        // Arrange â€” store vazio
 
         // Act
         var result = await _sut.GetHeavyRainAreasAsync(20.0);
@@ -112,7 +113,7 @@ public class WeatherServiceTests
     [Fact]
     public async Task GetHeavyRainAreasAsync_WhenHeavyRainExists_ShouldReturnMatchingCities()
     {
-        // Arrange — adiciona chuva forte direto na store
+        // Arrange â€” adiciona chuva forte direto na store
         var heavyRain = new Weather(
             null, "Osasco", -23.5322, -46.7919,
             20, 19, 95, 8, 25.0, null,
@@ -133,3 +134,4 @@ public class WeatherServiceTests
         result[0].City.Should().Be("Osasco");
     }
 }
+
