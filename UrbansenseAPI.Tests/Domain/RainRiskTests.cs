@@ -90,3 +90,17 @@ public class RainRiskTests
         result.Level.Should().Be(expectedLevel);
     }
 }
+
+
+    [Fact]
+    public void Alert_ShouldHaveTransitLineIdProperty()
+    {
+        // Arrange
+        var alert = new UrbansenseAPI.Domain.Models.Alert();
+
+        // Act
+        alert.transitLineId = 1;
+
+        // Assert
+        FluentAssertions.AssertionExtensions.Should(alert.transitLineId).Be(1);
+    }
